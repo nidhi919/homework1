@@ -88,8 +88,14 @@ export const start_server = () => {
             // Parse the request body (for form-encoded data)
             const body = await c.req.parseBody();
 
+            console.log("Parsed Body:", body);
+            console.log(body.Object);
+
+            
             // Extract the product ID from the form submission
-            const productID = body.productID;
+           const productID = body.productID;
+
+            
 
             // Ensure the ID is present
             if (!productID) {
@@ -97,10 +103,20 @@ export const start_server = () => {
             }
 
             // Delete the product from the database using the ID
-            const deleteResult = await db
+           /* const deleteResult = await db
                 .delete(product)
+               .where(eq(product.id, productID))
+                .run();   */
+
+            const updateResult = await db
+                .update(product)
+                .set({ deleted: true })
                 .where(eq(product.id, productID))
                 .run();
+
+            body.Object = true;
+
+            //product.deleted = true;
 
             return c.redirect("/");
 
@@ -123,6 +139,7 @@ export const start_server = () => {
 
         // Delete the product from the database using the ID
         //const deleteResult = await db.delete(product).where(eq(product.id, id)).run();
+
 
 
 
